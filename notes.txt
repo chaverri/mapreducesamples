@@ -1,0 +1,2 @@
+Use Counters if possible (les than 100 categories/keys)
+Use combiners if possible (sum, count, average)
