@@ -15,7 +15,7 @@ public class ProductsByLocationSumJob {
 
     final static Logger logger = Logger.getLogger(ProductsByLocationSumJob.class);
 
-    public boolean run(String location) throws IOException, ClassNotFoundException, InterruptedException {
+    public boolean run(String locationColumnFamily, String locationColumn) throws IOException, ClassNotFoundException, InterruptedException {
 
         Configuration config = HBaseConfiguration.create();
         Job job = new Job(config, "ProductsByLocationSumJob");
@@ -30,7 +30,7 @@ public class ProductsByLocationSumJob {
         logger.info("Setting mapper ...");
         // set other scan attrs
         TableMapReduceUtil.initTableMapperJob(
-                "orders", // input table
+                "users", // input table
                 scan, // Scan instance to control CF and attribute selection
                 ProductByLocationSumMap.class, // mapper class
                 Text.class, // mapper output key
@@ -39,7 +39,7 @@ public class ProductsByLocationSumJob {
 
         logger.info("Setting reducer...");
         TableMapReduceUtil.initTableReducerJob(
-                "purchaseBy" + location, // output table
+                "purchaseByLocation", // output table
                 ProductByLocationSumReduce.class, // reducer class
                 job);
 
@@ -48,8 +48,8 @@ public class ProductsByLocationSumJob {
 
         job.setNumReduceTasks(10); // at least one, adjust as required
 
-        job.getConfiguration().set(ProductByLocationSettings.LOCATION_COLUMN_FAMILY.name(), "cfInfo");
-        job.getConfiguration().set(ProductByLocationSettings.LOCATION_COLUMN_NAME.name(), location);
+        job.getConfiguration().set(ProductByLocationSettings.LOCATION_COLUMN_FAMILY.name(), locationColumnFamily);
+        job.getConfiguration().set(ProductByLocationSettings.LOCATION_COLUMN_NAME.name(), locationColumn);
 
 
         logger.info("Running job ...");

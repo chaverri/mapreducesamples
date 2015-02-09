@@ -73,12 +73,4 @@ public class TopStoreSalesMapper extends TableMapper<NullWritable, StoreSalesInf
 
 
 
-/*
 
-put 'orders','order1#Line1', 'cfInfo:ProductId','Product1'
-put 'orders','order1#Line1', 'cfInfo:Qty', 1
-put 'orders','order1#Line1', 'cfInfo:State', 'FL'
-put 'orders','order1#Line1', 'cfInfo:City', 'MIAMI'
-
-
-* */

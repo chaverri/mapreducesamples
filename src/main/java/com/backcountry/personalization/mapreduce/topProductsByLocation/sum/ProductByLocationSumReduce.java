@@ -23,8 +23,8 @@ public class ProductByLocationSumReduce extends TableReducer<Text, IntWritable, 
 
             String inKey = new String(key.getBytes());
             // set new key having only store
-            String location = inKey.split(":")[0];
-            String productId = inKey.split(":")[1];
+            String location = inKey.split("\\|")[0];
+            String productId = inKey.split("\\|")[1];
 
             Integer count = 0;
 
@@ -34,15 +34,13 @@ public class ProductByLocationSumReduce extends TableReducer<Text, IntWritable, 
             }
 
             // create hbase put with rowkey as store
-            Put insHBase = new Put(key.getBytes());
+            Put insHBase = new Put(location.getBytes());
 
-            insHBase.add(Bytes.toBytes("cfInfo"), Bytes.toBytes("Location"), Bytes.toBytes(location));
-            insHBase.add(Bytes.toBytes("cfInfo"), Bytes.toBytes("ProductId"), Bytes.toBytes(productId));
+            String columnKey = count + "|" + productId;
 
-            // insert count value to hbase
-            insHBase.add(Bytes.toBytes("cfInfo"), Bytes.toBytes("Count"), Bytes.toBytes(count));
+            insHBase.add(Bytes.toBytes("r"), Bytes.toBytes(columnKey), Bytes.toBytes(1)); //saves one just as a placeholder
 
-            logger.info("Saving (after sum) key:" + key.toString() + " value:" + count);
+            logger.info("Saving on rowkey:" + location + " new column:" + columnKey + " under column family: r");
 
             // write data to Hbase table
             context.write(null, insHBase);

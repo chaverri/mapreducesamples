@@ -16,6 +16,7 @@ public class ProductByLocationSumMap extends TableMapper<Text, IntWritable> {
 
     private String locationColumnFamily;
     private String locationColumnName;
+    private static final  IntWritable ONE = new IntWritable(1);
 
     @Override
     public void setup(Context context) throws IOException, InterruptedException{
@@ -28,16 +29,20 @@ public class ProductByLocationSumMap extends TableMapper<Text, IntWritable> {
             throws IOException, InterruptedException {
         try {
 
-
             String location = new String(columns.getValue(Bytes.toBytes(locationColumnFamily), Bytes.toBytes(locationColumnName)));
-            String productId = new String(columns.getValue(Bytes.toBytes("cfInfo"), Bytes.toBytes("ProductId")));
-            Integer qty = new Integer(new String(columns.getValue(Bytes.toBytes("cfInfo"), Bytes.toBytes("Qty"))));
 
-            String reduceKey = location + ":" + productId;
+            //Get all orders
+            for(byte[] columnName : columns.getFamilyMap(Bytes.toBytes("o")).keySet()){
 
-            logger.info("Emitting to reducer, key:" + reduceKey);
-            // emit store and qty values
-            context.write(new Text(reduceKey), new IntWritable(qty));
+                String orderKey = new String(columnName);
+
+                String productId = orderKey.split("\\|")[1];
+
+                String reduceKey = location + "|" + productId;
+                logger.info("Emitting to reducer, key: " + reduceKey);
+                // emit store and qty values
+                context.write(new Text(reduceKey), ONE);
+            }
 
         } catch (RuntimeException e) {
             e.printStackTrace();

@@ -14,12 +14,22 @@ public class SumAndTopProductsByLocationJob {
 
         boolean result = false;
 
-        result = productsByLocationSumJob.run(location);
+        //result = productsByLocationSumJob.run(location);
 
-        if(result){
-            result = topProductsByLocationJob.run(top, location);
-        }
+        //if(result){
+        //    result = topProductsByLocationJob.run(top, location);
+        //}
 
         return result;
     }
 }
+
+
+/*
+
+put 'orders','order1#Line1', 'cfInfo:ProductId','Product1'
+put 'orders','order1#Line1', 'cfInfo:Qty', 1
+put 'orders','order1#Line1', 'cfInfo:State', 'FL'
+put 'orders','order1#Line1', 'cfInfo:City', 'MIAMI'
+
+*/
